@@ -1,0 +1,2 @@
+simplenote~=2.1.4
+keyring~=21.1.0
