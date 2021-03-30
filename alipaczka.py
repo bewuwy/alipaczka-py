@@ -3,8 +3,8 @@ import ssl
 import requests
 from bs4 import BeautifulSoup
 from email.message import EmailMessage
-from os import environ
 import json
+from os.path import exists
 
 
 def check_tracking(tracking_number):
@@ -92,7 +92,30 @@ def send_email(email, pass_, changes, t_info, receiver, old_t_info, p_name, p_nu
         server.close()
 
 
-def check(check_list, gmail_address, google_pass):
+if __name__ == "__main__":
+    if not exists("config.json"):
+        with open("config.json", "w") as f:
+            json.dump({"gmail": "my@gmail.com", "gmail_pass": "myPassword"}, f, indent=4)
+    if not exists("check.json"):
+        with open("check.json", "w") as f:
+            json.dump({"my@email.com": [["PL123456", "my package #1"]]}, f, indent=4)
+
+            print("add some packages to track in check.json file")
+            quit(0)
+    else:
+        with open("check.json") as f:
+            check_list = json.load(f)
+    if not exists("data.json"):
+        with open("data.json", "w") as f:
+            json.dump({}, f, indent=4)
+
+    with open("config.json") as f:
+        config = json.load(f)
+
+    if not check_list:
+        print("add some packages to track in check.json file")
+        quit(0)
+
     for i in check_list:
         print("=" * 30)
         print(i)
@@ -107,11 +130,4 @@ def check(check_list, gmail_address, google_pass):
 
             # sending email
             if difference:
-                send_email(gmail_address, google_pass, difference, info, i, old, name, number)
-
-
-if __name__ == "__main__":
-    with open("check.json") as f:
-        c_list = json.load(f)
-
-    check(c_list, environ.get("MAIL"), environ.get("GOOGLE_PASS"))
+                send_email(config["gmail"], config["gmail_pass"], difference, info, i, old, name, number)
