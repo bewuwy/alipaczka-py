@@ -7,9 +7,9 @@ import json
 from os.path import exists
 
 
-def check_tracking(tracking_number):
+def check_tracking(tracking_number, name=""):
     print('\n' + '-' * 20)
-    print(tracking_number)
+    print(f"{tracking_number} ({name})")
     url = f"https://alipaczka.pl/pobierz.php?q={tracking_number}"
 
     soup = BeautifulSoup(requests.get(url).content, "html.parser")
@@ -124,9 +124,9 @@ if __name__ == "__main__":
         for z in range(len(check_list[i])):
             # checking tracking info
             number = check_list[i][z][0]
-            info = check_tracking(number)
-            difference, old = check_difference(number, info)
             name = check_list[i][z][1]
+            info = check_tracking(number, name)
+            difference, old = check_difference(number, info)
 
             # sending email
             if difference:
